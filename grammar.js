@@ -462,6 +462,10 @@ module.exports = grammar({
         token(caseInsensitive("DECLARE")),
         token(caseInsensitive("DROP")),
         token(caseInsensitive("EXECUTE")),
+        seq(
+          token(caseInsensitive("EXECUTE")),
+          optional(token(caseInsensitive("IMMEDIATE"))),
+        ),
         token(caseInsensitive("DELETE")),
         token(caseInsensitive("UPDATE")),
         token(caseInsensitive("UPDATEBLOB")),
@@ -548,7 +552,7 @@ module.exports = grammar({
     end_of_sql: ($) =>
       seq(
         alias(token(caseInsensitive("USING")), $.using_keyword),
-        $.local_variable,
+        seq(optional("("), $.local_variable, optional(")")),
       ),
     choose_block_start: ($) => token(caseInsensitive("choose case")),
     choose_case: ($) => token(caseInsensitive("case")),
