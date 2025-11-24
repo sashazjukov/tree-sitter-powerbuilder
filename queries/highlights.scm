@@ -54,6 +54,8 @@
 ((operator_assignment) @operator)
 ((operator_compare) @operator)
 ((operator_logical) @operator.logical)
+; ((operator_not) @operator.logical)
+
 
 ((builtin_const) @keyword)
 
@@ -66,7 +68,12 @@
 ((pb_inner_on_event) @keyword.directive)
 
 ; Highlight identifiers in forward prototypes
-((type) @class.name)
+((type) @type)
+
+(create_expression 
+  (keyword) 
+  (type_name 
+    classname: (idt) @type))
 
 ((integer) @number)
 ((type_integer) @number)
@@ -76,16 +83,17 @@
 ((string_literal_content) @string)
 ((string_literal_content_single) @string)
 ((boolean_literal) @string)
+((builtin_type) @type)
 
 ((comment) @comment)
 
 ;; ((function_name) @function)
-((visibility) @visibility)
+((visibility) @keyword.modifier)
 ((keyword_return) @keyword.return)
 
 (function_parameters 
   (function_parameter 
-    (type) @class.name 
+    (type) @type 
     (local_variable) @variable.local ))
 
 (expression 
@@ -106,7 +114,7 @@
 
 (object_method_call 
   left: (object_name)  @variable.member_left
-  right: (object_name) @variable)
+  right: (object_name) @function.method)
 
 ; (object_method_call 
 ;   right: (array_call) @variable)
