@@ -623,6 +623,13 @@
       "type": "STRING",
       "value": ";"
     },
+    "operator_not": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[nN][oO][tT]"
+      }
+    },
     "unary_expression": {
       "type": "PREC_LEFT",
       "value": 40,
@@ -636,18 +643,11 @@
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "FIELD",
-                    "name": "operator",
+                    "type": "PREC",
+                    "value": 100,
                     "content": {
-                      "type": "PREC",
-                      "value": 100,
-                      "content": {
-                        "type": "TOKEN",
-                        "content": {
-                          "type": "PATTERN",
-                          "value": "[nN][oO][tT]"
-                        }
-                      }
+                      "type": "SYMBOL",
+                      "name": "operator_not"
                     }
                   },
                   {
@@ -2192,6 +2192,33 @@
           }
         },
         {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "[eE][xX][eE][cC][uU][tT][eE]"
+              }
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[iI][mM][mM][eE][dD][iI][aA][tT][eE]"
+                  }
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "type": "TOKEN",
           "content": {
             "type": "PATTERN",
@@ -2587,8 +2614,37 @@
           "value": "using_keyword"
         },
         {
-          "type": "SYMBOL",
-          "name": "local_variable"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "("
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "local_variable"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ")"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
