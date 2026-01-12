@@ -86,7 +86,8 @@
 ((boolean_literal) @string)
 ((builtin_type) @type)
 
-((comment) @comment)
+((block_comment) @comment)
+((line_comment) @comment)
 
 ;; ((function_name) @function)
 ((visibility) @keyword.modifier)

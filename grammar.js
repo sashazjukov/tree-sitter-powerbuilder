@@ -28,7 +28,12 @@ const PREC = {
 
 module.exports = grammar({
   name: "powerbuilder",
-  extras: ($) => [$.comment, /\s/, $.line_carry],
+
+  externals: $ => [
+    $.block_comment,     // produced by scanner.c
+  ],
+
+  extras: ($) => [$.block_comment, $.line_comment,/\s/, $.line_carry],
   // conflicts: ($) => [[$.assignment, $.variable_list]],
   // supertypes: ($) => [$.statement, $.expression, $.declaration, $.variable],
   rules: {
@@ -965,13 +970,14 @@ module.exports = grammar({
 
     idt_with_underscore: ($) => /[a-zA-Z]+[_]+[a-zA-Z0-9_\-]*/,
     newline: ($) => /[\n\r]/,
-    comment: (_) =>
-      token(
-        choice(
-          seq("//", /[^\n\r]*/),
-          seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/"),
-        ),
-      ),
+
+    // Use a non-token recursive rule for nested block comments
+    comment: $ => choice($.line_comment, $.block_comment),
+
+    line_comment: $ =>
+      token(seq('//', /[^\n\r]*/)),
+
+    // ...rest of your grammar...
     string_literal_content_single: ($) =>
       choice(
         $.escape_sequence,
