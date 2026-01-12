@@ -33,6 +33,7 @@
  "end function"
  "type"
  "from"
+ "within"
  "end type"
  "type variables"
  "end variables"
@@ -40,11 +41,11 @@
 
 ((function_keyword) @keyword.directive)
 
-((for_next) @keyword.return)
+((for_next) @keyword)
 ((exit_statemnt) @keyword.return)
-(continue_statemnt) @keyword.return
-(do_until_alias) @keyword.return
-((event_prototype) @event_prototype)
+((continue_statemnt) @keyword.return)
+((do_until_alias) @keyword)
+((event_prototype) @keyword.directive)
 [
 "++"
 "--"
@@ -54,7 +55,7 @@
 ((operator_assignment) @operator)
 ((operator_compare) @operator)
 ((operator_logical) @operator.logical)
-; ((operator_not) @operator.logical)
+((operator_not) @operator.logical.not)
 
 
 ((builtin_const) @keyword)
@@ -114,7 +115,7 @@
 
 (object_method_call 
   left: (object_name)  @variable.member_left
-  right: (object_name) @function.method)
+  right: (object_name) @variable.member)
 
 ; (object_method_call 
 ;   right: (array_call) @variable)
@@ -134,9 +135,16 @@
 ;; ((end_of_sql) @sql.keyword )
 ((using_keyword) @keyword )
 
-(sql_into_params 
- (local_variable) @sql.parameter)
+;; --=[ SQl ]=-
+(sql_into_params
+  (local_variable) @sql.parameter
+  (#set! priority 101)
+)
 
+(sql_into_params
+  (local_variable) @variable.local
+  (#set! priority 101)
+)
 ; Injected sql
 ;; ((keyword_select) @sql.keyword)
 ;; ((keyword_from) @sql.keyword)
@@ -169,9 +177,15 @@
 
 
 ; --=[ DW Syntax]=---
-(dw_sql_arg 
- (local_variable) @sql.parameter)
+(dw_sql_arg
+  (local_variable) @sql.parameter
+  (#set! priority 101)
+)
 
+(dw_sql_arg
+  (local_variable) @variable.local
+  (#set! priority 101)
+)
 
 ((dw_prop) @variable)
 ((dw_operator_assignment) @operator)

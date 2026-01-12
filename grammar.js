@@ -145,13 +145,15 @@ module.exports = grammar({
     line_carry: ($) => "&",
     point_comma: ($) => ";",
 
+    operator_not: ($) => token(caseInsensitive("NOT")),
+
     unary_expression: ($) =>
       prec.left(
         PREC.UNARY,
         seq(
           choice(
             seq(
-              field("operator", prec(100, token(caseInsensitive("NOT")))),
+              prec(100, $.operator_not ),
               field("argument", $.expression),
             ),
             seq("-", field("argument", $.expression)),
@@ -179,17 +181,19 @@ module.exports = grammar({
     end_of_function: ($) =>
       choice(token("end function"), token("end subroutine")),
 
+    keyword_return: ($) => token(caseInsensitive("return")),
+
     return_statement: ($) =>
       choice(
         prec.left(
           PREC.RETURN,
           seq(
-            alias(token(caseInsensitive("return")), $.keyword_return),
+            $.keyword_return,
             $.expression,
             $.newline,
           ),
         ),
-        prec(41, seq(token(caseInsensitive("return")), $.newline)),
+        prec(41, seq($.keyword_return, $.newline))
       ),
 
     type_prototypes: ($) =>
@@ -288,6 +292,7 @@ module.exports = grammar({
         field("InstanceControlName", $.type_name),
         token("from"),
         $.type_name,
+        optional(seq(token("`"),$.type_name)),
         token("within"),
         $.type_name,
         $.newline,
@@ -393,6 +398,7 @@ module.exports = grammar({
       seq(
         token("event"),
         optional(seq(token("type"), $.type)),
+        optional(seq($.type,token("::"))),
         $.event_name,
         optional($.event_parameters),
         optional($.event_builtin_type),
