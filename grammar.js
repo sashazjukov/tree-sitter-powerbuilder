@@ -29,11 +29,11 @@ const PREC = {
 module.exports = grammar({
   name: "powerbuilder",
 
-  externals: $ => [
-    $.block_comment,     // produced by scanner.c
-  ],
+  // externals: $ => [
+  //   $.block_comment,     // produced by scanner.c
+  // ],
 
-  extras: ($) => [$.block_comment, $.line_comment,/\s/, $.line_carry],
+  extras: ($) => [$.comment, /\s/, $.line_carry ],
   // conflicts: ($) => [[$.assignment, $.variable_list]],
   // supertypes: ($) => [$.statement, $.expression, $.declaration, $.variable],
   rules: {
@@ -603,7 +603,6 @@ module.exports = grammar({
           choice(
             $.return_statement,
             $.local_declaration,
-            // $.comment,
             prec(PREC.ASSIGNMENT, $.assignment),
             $.function_call,
             $.if_statment,
@@ -738,8 +737,9 @@ module.exports = grammar({
     // Code blocks and control structures
     code_block: ($) => prec.right(repeat1($.statement)),
 
+    goto_use_keyword: ($) => token(caseInsensitive("goto")),
     goto_def: ($) => seq($.idt, ":"),
-    goto_use: ($) => seq(token(caseInsensitive("goto")), $.idt, $.newline),
+    goto_use: ($) => seq($.goto_use_keyword, $.idt, $.newline),
 
     if_keyword: ($) => token(caseInsensitive("IF")),
     elseif_keyword: ($) => token(caseInsensitive("ELSEIF")),
@@ -755,7 +755,6 @@ module.exports = grammar({
           choice($.if_keyword),
           $.expression,
           $.then_keyword,
-          optional($.comment),
           $.newline,
           optional(
             prec.right(
@@ -767,10 +766,9 @@ module.exports = grammar({
                       $.elseif_keyword,
                       $.expression,
                       $.then_keyword,
-                      optional($.comment),
                       $.newline,
                     ),
-                    seq(seq($.else_keyword, optional($.comment), $.newline)),
+                    seq(seq($.else_keyword, $.newline)),
                   ),
                 ),
               ),
@@ -969,14 +967,15 @@ module.exports = grammar({
     idt: ($) => /[a-zA-Z_][a-zA-Z0-9_\-]*/,
 
     idt_with_underscore: ($) => /[a-zA-Z]+[_]+[a-zA-Z0-9_\-]*/,
-    newline: ($) => /[\n\r]/,
+    newline: ($) => seq(optional(';'),/[\n\r]/),
 
     // Use a non-token recursive rule for nested block comments
-    comment: $ => choice($.line_comment, $.block_comment),
+ comment: $ => choice($.line_comment, $.block_comment),
 
     line_comment: $ =>
-      token(seq('//', /[^\n\r]*/)),
+      token(seq('//', /[^\n\r]*/, /[\n\r]/)),
 
+    block_comment: $ => token(seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/"),),
     // ...rest of your grammar...
     string_literal_content_single: ($) =>
       choice(
