@@ -41,10 +41,10 @@
 
 ((function_keyword) @keyword.directive)
 
-((for_next) @keyword)
+((for_next) @keyword.repeat)
 ((exit_statemnt) @keyword.return)
 ((continue_statemnt) @keyword.return)
-((do_until_alias) @keyword)
+((do_until_alias) @keyword.repeat)
 ((event_prototype) @keyword.directive)
 [
 "++"
@@ -109,7 +109,8 @@
     (local_variable) @variable.local ))
 
 (keyword) @keyword 
-
+(goto_use_keyword)@keyword.return 
+ 
 ((local_variable) @variable.local)
 
 ((object_name) @variable.member_left)
