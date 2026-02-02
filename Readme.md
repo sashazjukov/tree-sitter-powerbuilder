@@ -23,7 +23,8 @@ Query files:
 
 ```sh
 tree-sitter generate #must do!
-tree-sitter parse --debug .\example-file.srw | bat --color=always -l javascript
+tree-sitter parse .\example-file.sru | bat --color=always -l javascript
+tree-sitter parse .\example-file.srw --debug  | bat --color=always -l javascript
 ```
 
 ** Check test_grammer.ps1 **
