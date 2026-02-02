@@ -305,6 +305,25 @@
     }
   },
   {
+    "type": "comment",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "block_comment",
+          "named": true
+        },
+        {
+          "type": "line_comment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "continue_statemnt",
     "named": true,
     "fields": {},
@@ -360,6 +379,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "do_until_alias",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "do_untill_loop",
@@ -1436,6 +1460,10 @@
       "required": true,
       "types": [
         {
+          "type": "goto_use_keyword",
+          "named": true
+        },
+        {
           "type": "idt",
           "named": true
         },
@@ -1466,10 +1494,6 @@
       "types": [
         {
           "type": "code_block",
-          "named": true
-        },
-        {
-          "type": "comment",
           "named": true
         },
         {
@@ -1548,6 +1572,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "newline",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "object_method_call",
@@ -2294,6 +2323,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "operator_not",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2477,6 +2516,10 @@
     "named": false
   },
   {
+    "type": "::",
+    "named": false
+  },
+  {
     "type": ";",
     "named": false
   },
@@ -2521,6 +2564,14 @@
     "named": false
   },
   {
+    "type": "`",
+    "named": false
+  },
+  {
+    "type": "block_comment",
+    "named": true
+  },
+  {
     "type": "call super::",
     "named": false
   },
@@ -2533,16 +2584,7 @@
     "named": true
   },
   {
-    "type": "comment",
-    "named": true,
-    "extra": true
-  },
-  {
     "type": "decimal",
-    "named": true
-  },
-  {
-    "type": "do_until_alias",
     "named": true
   },
   {
@@ -2630,6 +2672,10 @@
     "named": false
   },
   {
+    "type": "goto_use_keyword",
+    "named": true
+  },
+  {
     "type": "idt",
     "named": true
   },
@@ -2655,7 +2701,11 @@
     "extra": true
   },
   {
-    "type": "newline",
+    "type": "line_comment",
+    "named": true
+  },
+  {
+    "type": "operator_not",
     "named": true
   },
   {
@@ -2744,6 +2794,10 @@
   },
   {
     "type": "~t",
+    "named": false
+  },
+  {
+    "type": "~~",
     "named": false
   }
 ]
