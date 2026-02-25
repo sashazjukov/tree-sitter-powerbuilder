@@ -383,6 +383,7 @@ module.exports = grammar({
         optional($.function_body),
         $.end_of_function,
       ),
+
     function_name: ($) => prec(PREC.FUNCTION_NAME, $.idt),
     function_body: ($) => $.code_block,
 
@@ -973,7 +974,7 @@ module.exports = grammar({
  comment: $ => choice($.line_comment, $.block_comment),
 
     line_comment: $ =>
-      token(seq('//', /[^\n\r]*/, /[\n\r]/)),
+      token(seq('//', /[^\n\r]*/)),
 
     block_comment: $ => token(seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/"),),
     // ...rest of your grammar...
