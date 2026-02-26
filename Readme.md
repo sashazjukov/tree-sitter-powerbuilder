@@ -1,8 +1,8 @@
 # Tree-sitter Grammar for Power Builder language
 
-This is my own implementation of the tree-sitter grammer file for Power Builder langage syntax highlighting.
+This is my own implementation of the tree-sitter grammar file for Power Builder language syntax highlighting.
 
-Work is still in progress, but most of usefull things are implemented! 
+Work is still in progress, but most of useful things are implemented! 
 So we can now fill the power of the NeoVim editor for Power Builder files types!
 
 
@@ -11,7 +11,7 @@ So we can now fill the power of the NeoVim editor for Power Builder files types!
 
 ## What is implemented
 
-Grammer for file types:
+Grammar for file types:
 
 - .srw (Window)
 - .sru (UserObject)
@@ -27,11 +27,11 @@ Query files:
 
 ## How to build - generate and test
 
-see tree-sitter manual
+Si tree-sitter manual
 
 ```sh
 tree-sitter generate #must do!
-#some test commnads
+#some test commands
 tree-sitter parse .\example-file.sru
 tree-sitter highlight .\example-file.sru
 tree-sitter parse --debug .\example-file.srw | bat --color=always -l javascript
@@ -41,9 +41,9 @@ tree-sitter parse --debug .\example-file.srw | bat --color=always -l javascript
 
 ## How to use (Install to nvim)
 
-Please refare to tree-sitter manual how to do it in correct way, as below is just what I remeber from my experience, and how I use it.
+Please refer to tree-sitter manual how to do it in correct way, as below is just what I remember from my experience, and how I use it.
 
-- Add simlinks to the scm files from this repo to ...\nvim\after\queries\powerbuilder folder
+- Add symlinks to the .scm files from this repo to ...\nvim\after\queries\powerbuilder folder
 ![image](https://github.com/user-attachments/assets/2342722a-1e64-47bf-ac51-6b577e2cbb4d)
 
 
@@ -76,7 +76,7 @@ return {
       end
     end,
     config = function(_, opts)
-      -- Add filetype detection for PowerBuilder files
+      -- Add file type detection for Power Builder files
       vim.filetype.add {
         extension = {
           srw = "powerbuilder",
@@ -119,7 +119,7 @@ vim.filetype.add {
       },
 ```
 
-- Inside Nvim type a command to build and import .so file to nvim (I could not (and did not whant to spend much time) find a way how to build this file outside nvim on Windows :) )
+- Inside Nvim type a command to build and import .so file to nvim (I could not (and did not want to spend much time) find a way how to build this file outside nvim on Windows :) )
 
 ```sh
 :TSInstallFromGrammar PowerBuiilder
