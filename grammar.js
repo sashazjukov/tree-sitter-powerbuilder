@@ -33,7 +33,7 @@ module.exports = grammar({
   //   $.block_comment,     // produced by scanner.c
   // ],
 
-  extras: ($) => [$.comment, /\s/, $.line_carry ],
+  extras: ($) => [$.comment, /\s/, $.line_carry],
   // conflicts: ($) => [[$.assignment, $.variable_list]],
   // supertypes: ($) => [$.statement, $.expression, $.declaration, $.variable],
   rules: {
@@ -158,7 +158,7 @@ module.exports = grammar({
         seq(
           choice(
             seq(
-              prec(100, $.operator_not ),
+              prec(100, $.operator_not),
               field("argument", $.expression),
             ),
             seq("-", field("argument", $.expression)),
@@ -217,8 +217,9 @@ module.exports = grammar({
         token("end prototypes"),
       ),
 
+    pb_file_mame: ($) => seq($.type_name, ".", $.class_type),
     pb_header_calss_name: ($) =>
-      seq(token("HA$PBExportHeader$"), $.type_name, ".", $.class_type),
+      seq(token("HA$PBExportHeader$"), $.pb_file_mame),
     pb_header_comment: ($) =>
       seq(token("$PBExportComments$"), /[^\n]+/, $.newline),
 
@@ -266,6 +267,8 @@ module.exports = grammar({
         $.type_name,
         token("from"),
         $.type_name,
+        $.newline,
+        repeat($.local_declaration),
         token("end type"),
       ),
 
@@ -273,8 +276,12 @@ module.exports = grammar({
     forward_types: ($) =>
       seq(
         token("forward"),
-        $.class_inherit_from,
-        repeat($.forward_type),
+        repeat(
+          choice(
+            $.class_inherit_from,
+            $.forward_type
+          )
+        ),
         token("end forward"),
       ),
 
@@ -283,7 +290,7 @@ module.exports = grammar({
         token("type"),
         field("InstanceControlName", $.type_name),
         token("from"),
-        $.type_name,
+        commaSepUp1($.type_name),
         token("within"),
         $.type_name,
         $.newline,
@@ -296,8 +303,7 @@ module.exports = grammar({
         token("type"),
         field("InstanceControlName", $.type_name),
         token("from"),
-        $.type_name,
-        optional(seq(token("`"),$.type_name)),
+        commaSepUp1($.type_name),
         token("within"),
         $.type_name,
         $.newline,
@@ -404,7 +410,7 @@ module.exports = grammar({
       seq(
         token("event"),
         optional(seq(token("type"), $.type)),
-        optional(seq($.type,token("::"))),
+        optional(seq($.type, token("::"))),
         $.event_name,
         optional($.event_parameters),
         optional($.event_builtin_type),
@@ -436,7 +442,7 @@ module.exports = grammar({
     sql_into_params: ($) => commaSep1(seq(":", $.local_variable)),
 
     sql_block_statement: ($) =>
-      prec(PREC.SQL_BLOCK, seq($.sql_block_content, $.end_of_sql, ";")),
+      prec(PREC.SQL_BLOCK, seq($.sql_block_content, $.end_of_sql, token(";"))),
 
     sql_block_content: ($) =>
       seq(
@@ -473,11 +479,12 @@ module.exports = grammar({
       choice(
         token(caseInsensitive("DECLARE")),
         token(caseInsensitive("DROP")),
-        token(caseInsensitive("EXECUTE")),
         seq(
           token(caseInsensitive("EXECUTE")),
           optional(token(caseInsensitive("IMMEDIATE"))),
+          // optional($.idt),
         ),
+        seq(token(caseInsensitive("PREPARE"))),
         token(caseInsensitive("DELETE")),
         token(caseInsensitive("UPDATE")),
         token(caseInsensitive("UPDATEBLOB")),
@@ -485,6 +492,12 @@ module.exports = grammar({
           token(caseInsensitive("INSERT")),
           optional(token(caseInsensitive("INTO"))),
         ),
+      ),
+
+    sql_pb_keywords: ($) =>
+      choice(
+        token(caseInsensitive("PREPARE")),
+        // token(caseInsensitive("EXECUTE")),
       ),
 
     sql_start_keywords: ($) =>
@@ -564,7 +577,10 @@ module.exports = grammar({
     end_of_sql: ($) =>
       seq(
         alias(token(caseInsensitive("USING")), $.using_keyword),
-        seq(optional("("), $.local_variable, optional(")")),
+        choice(
+          commaSep1($.dw_sql_arg),
+          seq(optional("("), $.local_variable, optional(")"))
+        )
       ),
     choose_block_start: ($) => token(caseInsensitive("choose case")),
     choose_case: ($) => token(caseInsensitive("case")),
@@ -959,7 +975,13 @@ module.exports = grammar({
         ),
       ),
 
-    function_call: ($) => seq($.function_name, $.function_call_parameters),
+    // TODO: separate to evennt and function call
+    function_call: ($) => seq(
+      optional(seq(token("super::"), token("event"))),
+      $.function_name,
+      $.function_call_parameters
+    ),
+
     function_call_parameters: ($) =>
       seq("(", optional(repeat1(seq($.expression, optional(",")))), ")"),
 
@@ -968,10 +990,10 @@ module.exports = grammar({
     idt: ($) => /[a-zA-Z_][a-zA-Z0-9_\-]*/,
 
     idt_with_underscore: ($) => /[a-zA-Z]+[_]+[a-zA-Z0-9_\-]*/,
-    newline: ($) => seq(optional(';'),/[\n\r]/),
+    newline: ($) => seq(optional(';'), /[\n\r]/),
 
     // Use a non-token recursive rule for nested block comments
- comment: $ => choice($.line_comment, $.block_comment),
+    comment: $ => choice($.line_comment, $.block_comment),
 
     line_comment: $ =>
       token(seq('//', /[^\n\r]*/)),
@@ -988,7 +1010,7 @@ module.exports = grammar({
         $.escape_sequence,
         token.immediate(prec(PREC.STRING_LITERAL, /[^\~"\n]+/)),
       ),
-    escape_sequence: ($) => choice(token('~~'),token('~"'), token("~'"), token("~t")),
+    escape_sequence: (_$) => choice(token('~~'), token('~"'), token("~'"), token("~t")),
 
     // Helper rules
     global_class_dummy: ($) => seq($.dummy_keyword, $.idt, $.idt),
@@ -1010,10 +1032,23 @@ module.exports = grammar({
  *
  * @returns {SeqRule}
  */
+/**
+ * @param {RuleOrLiteral} rule
+ */
 function commaSep1(rule) {
   return seq(rule, repeat(field("comma", seq(",", rule))));
 }
 
+/**
+ * @param {RuleOrLiteral} rule
+ */
+function commaSepUp1(rule) {
+  return seq(rule, repeat(field("up_comma", seq("`", rule))));
+}
+
+/**
+ * @param {string} keyword
+ */
 function caseInsensitive(keyword) {
   return new RegExp(
     keyword
