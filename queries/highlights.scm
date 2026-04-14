@@ -60,7 +60,8 @@
 
 ((builtin_const) @keyword)
 
-((type_name) @class.name)
+((type_name) @type)
+((type_name classname: (idt)) @type)
 
 ;; (clas_name) @type)
 ((forward_types) @keyword.directive)

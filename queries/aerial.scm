@@ -1,7 +1,8 @@
 ; https://github.com/stevearc/aerial.nvim/blob/master/queries/php/aerial.scm
 ; (source_file
-(pb_header_calss_name 
-    (type_name)  @name
+; (pb_header_calss_name 
+(pb_file_mame
+    (type_name classname: (idt)) @name
     (#set! "kind" "File")) @symbol
 
 (forward_type_implemetation
