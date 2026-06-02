@@ -1022,7 +1022,7 @@ module.exports = grammar({
         $.escape_sequence,
         token.immediate(prec(PREC.STRING_LITERAL, /[^\~"\n]+/)),
       ),
-    escape_sequence: (_$) => choice(token('~~'), token('~"'), token("~'"), token("~t")),
+    escape_sequence: (_$) => choice(token('~~'), token('~"'), token("~'"), token("~t"), token("~n"), token("~r")),
 
     // Helper rules
     global_class_dummy: ($) => seq($.dummy_keyword, $.idt, $.idt),
