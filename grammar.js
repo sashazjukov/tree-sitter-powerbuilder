@@ -890,8 +890,11 @@ module.exports = grammar({
       ),
     integer: ($) => /\d+/,
     decimal: ($) => /\d*\.\d+/,
+
+    keyword_true: (_) => token(caseInsensitive("TRUE")),
+    keyword_false: (_) => token(caseInsensitive("FALSE")),
     boolean_literal: ($) =>
-      choice(token(caseInsensitive("TRUE")), token(caseInsensitive("FALSE"))),
+      choice($.keyword_true, $.keyword_false),
     operator_compare: ($) =>
       choice(
         "+",
