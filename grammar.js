@@ -674,13 +674,25 @@ module.exports = grammar({
     // event constructor;
     // this.setredraw(FALSE)
     // super::event constructor()
+    //
+    // call u_te_control_ppf::destroy
 
     // call uo_flexreport_area_ppf::destroy
+    keyword_supper: (_) => token(caseInsensitive("super::")),
     call_supper_statement: ($) =>
       seq(
         choice(
-          token(caseInsensitive("super::")),
-          token(caseInsensitive("call super::")),
+          $.keyword_supper,
+          seq(
+            token(caseInsensitive("call")),
+            choice(
+              $.keyword_supper,
+              seq(
+                $.type_name,
+                token(caseInsensitive("::")),
+              )
+            )
+          ),
         ),
         optional(token(caseInsensitive("event"))),
         $.event_name,
@@ -977,7 +989,7 @@ module.exports = grammar({
 
     // TODO: separate to evennt and function call
     function_call: ($) => seq(
-      optional(seq(token("super::"), token("event"))),
+      optional(seq(alias(token("super::"), $.keyword), alias(token("event"), $.keyword))),
       $.function_name,
       $.function_call_parameters
     ),
