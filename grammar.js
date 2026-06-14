@@ -24,6 +24,7 @@ const PREC = {
   STRING_ESCAPE: 2,
   ASSIGNMENT: 3,
   BINNARY_ESPRESSION: 3,
+  NAME_CONVETION: 4
 };
 
 module.exports = grammar({
@@ -172,7 +173,7 @@ module.exports = grammar({
         token(caseInsensitive("on")),
         $.type_name,
         ".",
-        alias($.idt, $.pb_inner_event_name),
+        alias($.idt_s, $.pb_inner_event_name),
         $.newline,
       ),
 
@@ -229,14 +230,14 @@ module.exports = grammar({
         $.type_name,
         token("from"),
         token("structure"),
-        repeat1($.local_declaration),
+        repeat1($.local_declaration_n),
         token("end type"),
       ),
 
     // optional($.event_prototype_protptypes),
     // Class structure
-    type_name: ($) => field("classname", $.idt),
-    class_type: ($) => $.idt,
+    type_name: ($) => field("classname", $.idt_s),
+    class_type: ($) => $.idt_s,
     global_type_block: ($) =>
       seq(
         field("dummy", token("global type")),
@@ -268,7 +269,7 @@ module.exports = grammar({
         token("from"),
         $.type_name,
         $.newline,
-        repeat($.local_declaration),
+        repeat($.local_declaration_n),
         token("end type"),
       ),
 
@@ -294,7 +295,7 @@ module.exports = grammar({
         token("within"),
         $.type_name,
         $.newline,
-        repeat($.local_declaration),
+        repeat($.local_declaration_n),
         token("end type"),
       ),
 
@@ -341,7 +342,7 @@ module.exports = grammar({
           seq(
             $.local_variable,
             optional("[]"),
-            optional(seq($.operator_assignment, $.expression)),
+            optional(seq($.operator_assignment, choice($.value, $.builtin_const))),
           ),
         ),
       ),
@@ -619,8 +620,8 @@ module.exports = grammar({
         seq(
           choice(
             $.return_statement,
-            $.local_declaration,
-            prec(PREC.ASSIGNMENT, $.assignment),
+            $.assignment,
+            $.local_declaration_n,
             $.function_call,
             $.if_statment,
             $.object_method_call,
@@ -860,13 +861,11 @@ module.exports = grammar({
     parenthesized_expression: ($) => seq("(", $.expression, ")"),
     array_expression: ($) => seq("{", repeat(commaSep1($.expression)), "}"),
     assignment: ($) =>
-      prec.left(
+      prec.left(PREC.ASSIGNMENT,
         seq(
           // $.object_method_call,
-          seq(
-            choice($.local_variable, $.object_method_call),
-            // optional($.array_construction),
-          ),
+          choice($.local_variable, $.object_method_call),
+          // optional($.array_construction),
           $.operator_assignment,
           repeat1($.expression),
           // $.newline,
@@ -921,7 +920,7 @@ module.exports = grammar({
     type: ($) =>
       choice(
         seq($.builtin_type, optional($.type_size_precision)),
-        $.idt_with_underscore,
+        $.idt,
         $.idt,
       ),
 
@@ -1001,10 +1000,23 @@ module.exports = grammar({
       seq("(", optional(repeat1(seq($.expression, optional(",")))), ")"),
 
     // Low-level tokens
-    word: ($) => $.idt,
-    idt: ($) => /[a-zA-Z_][a-zA-Z0-9_\-]*/,
+    // word: ($) => $.idt,
+    idt: ($) => $._idt_nc,
+    // idt: ($) => /[a-zA-Z_][a-zA-Z0-9_\-]*/,
+    // idt_with_underscore: ($) => /[a-zA-Z]+[_]+[a-zA-Z0-9_\-]*/,
 
     idt_with_underscore: ($) => /[a-zA-Z]+[_]+[a-zA-Z0-9_\-]*/,
+
+    _idt_nc: ($) => choice(prec(PREC.NAME_CONVETION, $.idt_nc_arg), prec(PREC.NAME_CONVETION, $.idt_nc_inst), prec(PREC.NAME_CONVETION, $.idt_nc_loc), prec(0, $.idt_s)),
+    idt_nc_arg: ($) => /[aA][a-zA-Z]*[_]+[a-zA-Z0-9_\-]*/,
+    idt_nc_loc: ($) => /[lL][a-zA-Z]*[_]+[a-zA-Z0-9_\-]*/,
+    idt_nc_inst: ($) => /[iI][a-zA-Z]*[_]+[a-zA-Z0-9_\-]*/,
+
+    idt_s: ($) => /[a-zA-Z_][a-zA-Z0-9_\-]*/,
+
+    // word: ($) => $.idt,
+
+
     newline: ($) => seq(optional(';'), /[\n\r]/),
 
     // Use a non-token recursive rule for nested block comments
@@ -1033,8 +1045,11 @@ module.exports = grammar({
     array_construction: ($) => seq("[", commaSep1($.expression), "]"),
     object_name: ($) => prec.left(seq($.idt, optional($.array_construction))),
 
+    local_declaration_n: ($) =>
+      seq($.local_declaration, $.newline),
+
     local_declaration: ($) =>
-      prec(PREC.LOCAL_DECLARATION, seq($.type, $.variable_list, $.newline)),
+      prec.left(PREC.LOCAL_DECLARATION, seq($.type, $.variable_list)),
   },
 });
 

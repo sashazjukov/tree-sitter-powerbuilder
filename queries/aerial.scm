@@ -2,7 +2,7 @@
 ; (source_file
 ; (pb_header_calss_name 
 (pb_file_mame
-    (type_name classname: (idt)) @name
+    (type_name classname: (idt_s)) @name
     (#set! "kind" "File")) @symbol
 
 (forward_type_implemetation

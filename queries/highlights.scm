@@ -61,7 +61,7 @@
 ((builtin_const) @keyword)
 
 ((type_name) @type)
-((type_name classname: (idt)) @type)
+((type_name classname: (idt_s)) @type)
 
 ;; (clas_name) @type)
 ((forward_types) @keyword.directive)
@@ -75,17 +75,19 @@
 (create_expression 
   (keyword) 
   (type_name 
-    classname: (idt) @type))
+    classname: (idt_s) @type))
 
 ((integer) @number)
 ((type_integer) @number)
 ((type_long) @number)
 ((type_string) @string)
-((type_boolean) @string)
-((string_literal_content) @string)
-((string_literal_content_single) @string)
-((boolean_literal) @string)
-((builtin_type) @type)
+((type_boolean) @boolean)
+((keyword_true) @boolean.true)
+((keyword_false) @boolean.false)
+ ((string_literal_content) @string)
+ ((string_literal_content_single) @string)
+((boolean_literal) @boolean)
+ ((builtin_type) @type)
 
 ((block_comment) @comment)
 ((line_comment) @comment)
@@ -97,7 +99,13 @@
 (function_parameters 
   (function_parameter 
     (type) @type 
-    (local_variable) @variable.local ))
+    ; (local_variable) @variable.local 
+    )
+  )
+
+((idt_nc_arg) @variable.argument)
+((idt_nc_loc) @variable.local)
+((idt_nc_inst) @variable.instance)
 
 (expression 
   (create_expression 
