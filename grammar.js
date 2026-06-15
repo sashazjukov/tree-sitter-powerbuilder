@@ -1007,7 +1007,7 @@ module.exports = grammar({
 
     idt_with_underscore: ($) => /[a-zA-Z]+[_]+[a-zA-Z0-9_\-]*/,
 
-    _idt_nc: ($) => choice(prec(PREC.NAME_CONVETION, $.idt_nc_arg), prec(PREC.NAME_CONVETION, $.idt_nc_inst), prec(PREC.NAME_CONVETION, $.idt_nc_loc), prec(0, $.idt_s)),
+    _idt_nc: ($) => choice(prec(PREC.NAME_CONVETION, $.idt_nc_arg), prec(PREC.NAME_CONVETION, $.idt_nc_inst), prec(PREC.NAME_CONVETION, $.idt_nc_loc), prec(1, $.idt_s)),
     idt_nc_arg: ($) => /[aA][a-zA-Z]*[_]+[a-zA-Z0-9_\-]*/,
     idt_nc_loc: ($) => /[lL][a-zA-Z]*[_]+[a-zA-Z0-9_\-]*/,
     idt_nc_inst: ($) => /[iI][a-zA-Z]*[_]+[a-zA-Z0-9_\-]*/,
@@ -1044,6 +1044,7 @@ module.exports = grammar({
     dummy_keyword: ($) => $.idt,
     array_construction: ($) => seq("[", commaSep1($.expression), "]"),
     object_name: ($) => prec.left(seq($.idt, optional($.array_construction))),
+    dw_object_name: ($) => prec.left(seq($.idt_s, optional($.array_construction))),
 
     local_declaration_n: ($) =>
       seq($.local_declaration, $.newline),
