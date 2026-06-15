@@ -46,11 +46,19 @@
 ((continue_statemnt) @keyword.return)
 ((do_until_alias) @keyword.repeat)
 ((event_prototype) @keyword.directive)
+
 [
 "++"
 "--"
 "="
+"+="
+"-="
  ] @operator
+
+[
+"'"
+"\""
+ ] @string
 
 ((operator_assignment) @operator)
 ((operator_compare) @operator)
