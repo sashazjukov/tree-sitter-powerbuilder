@@ -58,7 +58,7 @@
 [
 "'"
 "\""
- ] @string
+ ] @string_quotes
 
 ((operator_assignment) @operator)
 ((operator_compare) @operator)

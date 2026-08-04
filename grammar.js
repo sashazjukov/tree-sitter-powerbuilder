@@ -974,6 +974,7 @@ module.exports = grammar({
           ),
         ),
       ),
+    //TODO: post send (tab_1.tabpage_note.uo_rtf.ole_te.object.hWnd, 513,0,0)
 
     dw_object_keyword: ($) => token(caseInsensitive("object")),
     dw_object_table_column_call: ($) =>
